@@ -216,6 +216,7 @@ km_read_section(int fd, const char *section_name, struct xrdp_key_info *keymap)
 
                     keymap[code].sym = g_atoi(value);
                 }
+                g_printf("load section %s: index=%d chr=%d sym=%d\n", section_name, code, keymap[code].chr, keymap[code].sym);
             }
         }
     }
@@ -224,6 +225,9 @@ km_read_section(int fd, const char *section_name, struct xrdp_key_info *keymap)
     list_delete(values);
     return 0;
 }
+
+#undef XRDP_CFG_PATH
+#define XRDP_CFG_PATH "/etc/xrdp"
 
 /*****************************************************************************/
 int

@@ -1475,9 +1475,14 @@ xrdp_wm_key(struct xrdp_wm *self, int device_flags, int scan_code)
 
             if (ki != 0)
             {
+                g_printf("xrdp_wm_key: msg=%d ki->chr=%d ik->sym=%d scan_code=%d\n", msg, ki->chr, ki->sym, scan_code);
                 self->mm->mod->mod_event(self->mm->mod, msg, ki->chr, ki->sym,
                                          scan_code, device_flags);
             }
+            else
+            {
+                g_printf("xrdp_wm_key: msg=%d ki=0 scan_code=%d\n", msg, scan_code);
+            };
         }
     }
     else if (self->focused_window != 0)
@@ -1531,17 +1536,16 @@ xrdp_wm_key_unicode(struct xrdp_wm *self, int device_flags, int unicode)
 {
     int index;
 
+    g_printf("xrdp_wm_key_unicode: device_flags=%d unicode=%d\n", device_flags, unicode);
     for (index = XR_MIN_KEY_CODE; index < XR_MAX_KEY_CODE; index++)
     {
+        g_printf("index=%d chr=%d sym=%d  unicode=%d \n", index, self->keymap.keys_noshift[index].chr, self->keymap.keys_noshift[index].sym, unicode);
         if (unicode == self->keymap.keys_noshift[index].chr)
         {
             xrdp_wm_key(self, device_flags, index - XR_MIN_KEY_CODE);
             return 0;
         }
-    }
 
-    for (index = XR_MIN_KEY_CODE; index < XR_MAX_KEY_CODE; index++)
-    {
         if (unicode == self->keymap.keys_shift[index].chr)
         {
             if (device_flags & KBD_FLAG_UP)
@@ -1556,10 +1560,7 @@ xrdp_wm_key_unicode(struct xrdp_wm *self, int device_flags, int unicode)
             }
             return 0;
         }
-    }
 
-    for (index = XR_MIN_KEY_CODE; index < XR_MAX_KEY_CODE; index++)
-    {
         if (unicode == self->keymap.keys_altgr[index].chr)
         {
             if (device_flags & KBD_FLAG_UP)
@@ -1576,10 +1577,7 @@ xrdp_wm_key_unicode(struct xrdp_wm *self, int device_flags, int unicode)
             }
             return 0;
         }
-    }
 
-    for (index = XR_MIN_KEY_CODE; index < XR_MAX_KEY_CODE; index++)
-    {
         if (unicode == self->keymap.keys_shiftaltgr[index].chr)
         {
             if (device_flags & KBD_FLAG_UP)
@@ -1599,6 +1597,7 @@ xrdp_wm_key_unicode(struct xrdp_wm *self, int device_flags, int unicode)
         }
     }
 
+    g_printf("xrdp_wm_key_unicode: not found: device_flags=%d unicode=%d\n", device_flags, unicode);
     return 0;
 }
 
